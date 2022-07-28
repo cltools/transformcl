@@ -36,7 +36,7 @@ Reference/API
 
 '''
 
-__version__ = '2021.4.16'
+__version__ = '2022.7.28'
 
 __all__ = [
     'cltoxi',
