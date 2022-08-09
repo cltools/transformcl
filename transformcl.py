@@ -13,10 +13,10 @@ The package can be installed using pip::
 
     pip install transformcl
 
-Then import the :func:`~transformcl.cltoxi` and :func:`~transformcl.xitocl`
+Then import the :func:`~transformcl.cltocorr` and :func:`~transformcl.corrtocl`
 functions from the package::
 
-    from transformcl import cltoxi, xitocl
+    from transformcl import cltocorr, corrtocl
 
 Current functionality covers the absolutely minimal use case.  Please open an
 issue on GitHub if you would like to see anything added.
@@ -29,18 +29,18 @@ Reference/API
    :toctree: api
    :nosignatures:
 
-   cltoxi
-   xitocl
+   cltocorr
+   corrtocl
    theta
    cltovar
 
 '''
 
-__version__ = '2022.7.28'
+__version__ = '2022.8.9'
 
 __all__ = [
-    'cltoxi',
-    'xitocl',
+    'cltocorr',
+    'corrtocl',
     'theta',
     'cltovar',
 ]
@@ -53,7 +53,15 @@ from flt import dlt, idlt, theta
 FOUR_PI = 4*np.pi
 
 
-def cltoxi(cl, closed=False):
+def cltoxi(*args, **kwargs):
+    return cltocorr(*args, **kwargs)
+
+
+def xitocl(*args, **kwargs):
+    return corrtocl(*args, **kwargs)
+
+
+def cltocorr(cl, closed=False):
     r'''transform angular power spectrum to correlation function
 
     Takes an angular power spectrum with :math:`\mathtt{n} = \mathtt{lmax}+1`
@@ -74,12 +82,12 @@ def cltoxi(cl, closed=False):
 
     Returns
     -------
-    xi : (n,) array_like
+    corr : (n,) array_like
         Angular correlation function.
 
     See Also
     --------
-    transformcl.xitocl : the inverse operation
+    transformcl.corrtocl : the inverse operation
     transformcl.theta : compute the angles at which the correlation function is
                         evaluated
 
@@ -101,13 +109,13 @@ def cltoxi(cl, closed=False):
     c *= cl
 
     # perform the inverse DLT
-    xi = idlt(c, closed=closed)
+    corr = idlt(c, closed=closed)
 
     # done
-    return xi
+    return corr
 
 
-def xitocl(xi, closed=False):
+def corrtocl(corr, closed=False):
     r'''transform angular correlation function to power spectrum
 
     Takes an angular function in :math:`\mathtt{n}` points and returns the
@@ -121,7 +129,7 @@ def xitocl(xi, closed=False):
 
     Parameters
     ----------
-    xi : (n,) array_like
+    corr : (n,) array_like
         Angular correlation function.
     closed : bool
         Compute correlation function over open (``closed=False``) or closed
@@ -129,12 +137,12 @@ def xitocl(xi, closed=False):
 
     Returns
     -------
-    xi : (n,) array_like
+    cl : (n,) array_like
         Angular power spectrum from :math:`0` to :math:`\mathtt{lmax}`.
 
     See Also
     --------
-    transformcl.cltoxi : the inverse operation
+    transformcl.cltocorr : the inverse operation
     transformcl.theta : compute the angles at which the correlation function is
                         evaluated
 
@@ -145,19 +153,19 @@ def xitocl(xi, closed=False):
     '''
 
     # length n of the transform
-    if np.ndim(xi) != 1:
-        raise TypeError('xi must be 1d array')
-    n = np.shape(xi)[-1]
+    if np.ndim(corr) != 1:
+        raise TypeError('corr must be 1d array')
+    n = np.shape(corr)[-1]
 
     # compute the DLT coefficients
-    c = dlt(xi, closed=closed)
+    cl = dlt(corr, closed=closed)
 
     # DLT coefficients = (2l+1)/(4pi) * Cl
-    c /= np.arange(1, 2*n+1, 2, dtype=float)
-    c *= FOUR_PI
+    cl /= np.arange(1, 2*n+1, 2, dtype=float)
+    cl *= FOUR_PI
 
     # done
-    return c
+    return cl
 
 
 def cltovar(cl):
