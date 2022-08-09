@@ -12,9 +12,9 @@ The package can be installed using pip:
 
     pip install transformcl
 
-Then import the `cltoxi` and `xitocl` functions from the package:
+Then import the `cltocorr` and `corrtocl` functions from the package:
 
-    from transformcl import cltoxi, xitocl
+    from transformcl import cltocorr, corrtocl
 
 For more information, please see the [documentation].
 
